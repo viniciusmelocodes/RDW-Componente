@@ -1,0 +1,15 @@
+{
+  "UpdateLazPackages" : [
+    {
+      "ForceNotify" : false,
+      "InternalVersion" : 1,
+      "Name" : "resteasyobjectscore.lpk",
+      "Version" : "1.4.3.1"
+    }
+  ],
+  "UpdatePackageData" : {
+    "DisableInOPM" : false,
+    "DownloadZipURL" : "https://github.com/Rest-Dataware/RDW-Componente/tree/master/CORE/Source",
+    "Name" : "CORE"
+  }
+}
