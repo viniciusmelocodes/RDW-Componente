@@ -1,0 +1,146 @@
+object FrmDWSqlEditor: TFrmDWSqlEditor
+  Left = 472
+  Height = 492
+  Top = 153
+  Width = 610
+  BorderWidth = 5
+  Caption = 'RESTDWClientSQL Editor'
+  ClientHeight = 492
+  ClientWidth = 610
+  Color = clBtnFace
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnShow = FormShow
+  Position = poScreenCenter
+  LCLVersion = '1.8.0.5'
+  object Splitter1: TSplitter
+    Cursor = crVSplit
+    Left = 5
+    Height = 3
+    Top = 222
+    Width = 600
+    Align = alTop
+    ResizeAnchor = akTop
+  end
+  object PnlSQL: TPanel
+    Left = 5
+    Height = 217
+    Top = 5
+    Width = 600
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 217
+    ClientWidth = 600
+    TabOrder = 0
+    object PnlButton: TPanel
+      Left = 505
+      Height = 217
+      Top = 0
+      Width = 95
+      Align = alRight
+      BevelOuter = bvNone
+      ClientHeight = 217
+      ClientWidth = 95
+      TabOrder = 0
+      object BtnExecute: TButton
+        Left = 8
+        Height = 25
+        Top = 20
+        Width = 80
+        Caption = 'Execute'
+        OnClick = BtnExecuteClick
+        TabOrder = 0
+      end
+    end
+    object PageControl: TPageControl
+      Left = 0
+      Height = 217
+      Top = 0
+      Width = 505
+      ActivePage = TabSheetSQL
+      Align = alClient
+      TabIndex = 0
+      TabOrder = 1
+      object TabSheetSQL: TTabSheet
+        BorderWidth = 5
+        Caption = 'SQL Command'
+        ClientHeight = 191
+        ClientWidth = 497
+        object Memo: TMemo
+          Left = 0
+          Height = 191
+          Top = 0
+          Width = 497
+          Align = alClient
+          ScrollBars = ssBoth
+          TabOrder = 0
+        end
+      end
+    end
+  end
+  object PnlAction: TPanel
+    Left = 5
+    Height = 41
+    Top = 446
+    Width = 600
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 41
+    ClientWidth = 600
+    TabOrder = 1
+    object BtnOk: TButton
+      Left = 420
+      Height = 25
+      Top = 8
+      Width = 75
+      Anchors = [akTop, akRight]
+      Caption = 'Ok'
+      Default = True
+      ModalResult = 1
+      TabOrder = 0
+    end
+    object BtnCancelar: TButton
+      Left = 501
+      Height = 25
+      Top = 8
+      Width = 75
+      Anchors = [akTop, akRight]
+      Cancel = True
+      Caption = 'Cancel'
+      ModalResult = 2
+      TabOrder = 1
+    end
+  end
+  object PageControlResult: TPageControl
+    Left = 5
+    Height = 221
+    Top = 225
+    Width = 600
+    ActivePage = TabSheetTable
+    Align = alClient
+    TabIndex = 0
+    TabOrder = 2
+    object TabSheetTable: TTabSheet
+      BorderWidth = 5
+      Caption = 'RecordSet'
+      ClientHeight = 195
+      ClientWidth = 592
+      object DBGridRecord: TDBGrid
+        Left = 0
+        Height = 195
+        Top = 0
+        Width = 592
+        Align = alClient
+        Color = clWindow
+        Columns = <>
+        TabOrder = 0
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'Tahoma'
+      end
+    end
+  end
+end
