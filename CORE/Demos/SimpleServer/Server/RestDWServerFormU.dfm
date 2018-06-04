@@ -1489,13 +1489,20 @@ object RestDWForm: TRestDWForm
     SSLVerifyMode = []
     SSLVerifyDepth = 0
     ForceWelcomeAccess = False
-    Left = 132
-    Top = 192
+    RESTServiceNotification = RESTDWServiceNotification1
+    Left = 156
+    Top = 136
   end
   object tupdatelogs: TTimer
     Enabled = False
     OnTimer = tupdatelogsTimer
     Left = 332
     Top = 264
+  end
+  object RESTDWServiceNotification1: TRESTDWServiceNotification
+    GarbageTime = 60000
+    QueueNotifications = 50
+    Left = 188
+    Top = 136
   end
 end

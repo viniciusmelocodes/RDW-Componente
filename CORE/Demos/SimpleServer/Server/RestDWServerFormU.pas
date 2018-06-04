@@ -112,6 +112,7 @@ type
     EdURL: TEdit;
     cbForceWelcome: TCheckBox;
     cbauthentication: TCheckBox;
+    RESTDWServiceNotification1: TRESTDWServiceNotification;
     procedure FormCreate(Sender: TObject);
     procedure ApplicationEvents1Idle(Sender: TObject; var Done: Boolean);
     procedure ButtonStartClick(Sender: TObject);

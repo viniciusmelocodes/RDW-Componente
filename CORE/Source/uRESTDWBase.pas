@@ -53,6 +53,7 @@ Uses
      {$ENDIF}
 
 Type
+ TNotifyWelcomeMessage = Procedure(Welcomemsg, AccessTag : String;Var Accept : Boolean) Of Object;
  TLastRequest  = Procedure (Value             : String)              Of Object;
  TLastResponse = Procedure (Value             : String)              Of Object;
  TEventContext = Procedure (AContext          : TIdContext;
@@ -129,6 +130,27 @@ Type
 End;
 
 Type
+ TRESTDWServiceNotification = Class(TDWComponent)
+ Protected
+ Private
+  vAccessTag            : String;
+  vGarbageTime,
+  vQueueNotifications   : Integer;
+  vNotifyWelcomeMessage : TNotifyWelcomeMessage;
+  Procedure  SetAccessTag(Value : String);
+  Function   GetAccessTag       : String;
+ Public
+  Function GetNotifications(LastNotification : String) : String;
+  Constructor Create       (AOwner           : TComponent);Override; //Cria o Componente
+  Destructor  Destroy;Override; //Destroy a Classe
+ Published
+  Property GarbageTime          : Integer                Read vGarbageTime           Write vGarbageTime;
+  Property QueueNotifications   : Integer                Read vQueueNotifications    Write vQueueNotifications;
+  Property AccessTag            : String                 Read vAccessTag             Write vAccessTag;
+  Property OnWelcomeMessage     : TNotifyWelcomeMessage  Read vNotifyWelcomeMessage  Write vNotifyWelcomeMessage;
+End;
+
+Type
  TRESTServicePooler = Class(TDWComponent)
  Protected
   Procedure aCommandGet  (AContext      : TIdContext;
@@ -172,6 +194,7 @@ Type
   VEncondig        : TEncodeSelect;              //Enconding se usar CORS usar UTF8 - Alexandre Abade
   vSSLVerifyMode      : TIdSSLVerifyModeSet;
   vSSLVerifyDepth     : integer;
+  vRESTServiceNotification : TRESTDWServiceNotification;
   Function SSLVerifyPeer(Certificate: TIdX509;
                          AOk: Boolean; ADepth, AError: Integer): Boolean;
   Procedure GetSSLPassWord (Var Password              : String);
@@ -237,25 +260,26 @@ Type
   Constructor Create           (AOwner                : TComponent);Override; //Cria o Componente
   Destructor  Destroy;Override;                      //Destroy a Classe
  Published
-  Property Active                : Boolean         Read vActive                Write SetActive;
-  Property Secure                : Boolean         Read GetSecure;
-  Property ServicePort           : Integer         Read vServicePort           Write vServicePort;  //A Porta do Serviço do DataSet
-  Property ProxyOptions          : TProxyOptions   Read vProxyOptions          Write vProxyOptions; //Se tem Proxy diz quais as opções
-  Property ServerParams          : TServerParams   Read vServerParams          Write vServerParams;
-  Property ServerMethodClass     : TComponentClass Read vServerMethod          Write SetServerMethod;
-  Property SSLPrivateKeyFile     : String          Read aSSLPrivateKeyFile     Write aSSLPrivateKeyFile;
-  Property SSLPrivateKeyPassword : String          Read aSSLPrivateKeyPassword Write aSSLPrivateKeyPassword;
-  Property SSLCertFile           : String          Read aSSLCertFile           Write aSSLCertFile;
-  Property SSLMethod             : TIdSSLVersion   Read aSSLMethod             Write aSSLMethod;
-  Property SSLVersions           : TIdSSLVersions  Read aSSLVersions           Write aSSLVersions;
-  Property OnLastRequest         : TLastRequest    Read vLastRequest           Write vLastRequest;
-  Property OnLastResponse        : TLastResponse   Read vLastResponse          Write vLastResponse;
-  Property Encoding              : TEncodeSelect   Read VEncondig              Write VEncondig;          //Encoding da string
-  Property ServerContext         : String          Read vServerContext         Write vServerContext;
-  Property RootPath              : String          Read FRootPath              Write FRootPath;
-  property SSLVerifyMode: TIdSSLVerifyModeSet read vSSLVerifyMode write vSSLVerifyMode;
-  property SSLVerifyDepth: Integer read vSSLVerifyDepth write vSSLVerifyDepth;
-  Property ForceWelcomeAccess    : Boolean         Read vForceWelcomeAccess    Write vForceWelcomeAccess;
+  Property Active                  : Boolean                    Read vActive                  Write SetActive;
+  Property Secure                  : Boolean                    Read GetSecure;
+  Property ServicePort             : Integer                    Read vServicePort             Write vServicePort;  //A Porta do Serviço do DataSet
+  Property ProxyOptions            : TProxyOptions              Read vProxyOptions            Write vProxyOptions; //Se tem Proxy diz quais as opções
+  Property ServerParams            : TServerParams              Read vServerParams            Write vServerParams;
+  Property ServerMethodClass       : TComponentClass            Read vServerMethod            Write SetServerMethod;
+  Property SSLPrivateKeyFile       : String                     Read aSSLPrivateKeyFile       Write aSSLPrivateKeyFile;
+  Property SSLPrivateKeyPassword   : String                     Read aSSLPrivateKeyPassword   Write aSSLPrivateKeyPassword;
+  Property SSLCertFile             : String                     Read aSSLCertFile             Write aSSLCertFile;
+  Property SSLMethod               : TIdSSLVersion              Read aSSLMethod               Write aSSLMethod;
+  Property SSLVersions             : TIdSSLVersions             Read aSSLVersions             Write aSSLVersions;
+  Property OnLastRequest           : TLastRequest               Read vLastRequest             Write vLastRequest;
+  Property OnLastResponse          : TLastResponse              Read vLastResponse            Write vLastResponse;
+  Property Encoding                : TEncodeSelect              Read VEncondig                Write VEncondig;          //Encoding da string
+  Property ServerContext           : String                     Read vServerContext           Write vServerContext;
+  Property RootPath                : String                     Read FRootPath                Write FRootPath;
+  property SSLVerifyMode           : TIdSSLVerifyModeSet        Read vSSLVerifyMode           Write vSSLVerifyMode;
+  property SSLVerifyDepth          : Integer                    Read vSSLVerifyDepth          Write vSSLVerifyDepth;
+  Property ForceWelcomeAccess      : Boolean                    Read vForceWelcomeAccess      Write vForceWelcomeAccess;
+  Property RESTServiceNotification : TRESTDWServiceNotification Read vRESTServiceNotification Write vRESTServiceNotification;
 End;
 
 
@@ -272,6 +296,7 @@ Type
   vLastRequest     : TLastRequest;
   vLastResponse    : TLastResponse;
   VEncondig        : TEncodeSelect;              //Enconding se usar CORS usar UTF8 - Alexandre Abade
+  vRESTServiceNotification : TRESTDWServiceNotification;
   Procedure SetServerMethod(Value                     : TComponentClass);
   Procedure GetPoolerList(ServerMethodsClass          : TComponent;
                           Var PoolerList              : String;
@@ -337,13 +362,14 @@ Type
   Constructor Create           (AOwner                : TComponent);Override; //Cria o Componente
   Destructor  Destroy;Override;                      //Destroy a Classe
  Published
-  Property ServerParams          : TServerParams   Read vServerParams          Write vServerParams;
-  Property ServerMethodClass     : TComponentClass Read vServerMethod          Write SetServerMethod;
-  Property OnLastRequest         : TLastRequest    Read vLastRequest           Write vLastRequest;
-  Property OnLastResponse        : TLastResponse   Read vLastResponse          Write vLastResponse;
-  Property Encoding              : TEncodeSelect   Read VEncondig              Write VEncondig;          //Encoding da string
-  Property ForceWelcomeAccess    : Boolean         Read vForceWelcomeAccess    Write vForceWelcomeAccess;
-  Property ServerContext         : String          Read vServerContext         Write vServerContext;
+  Property ServerParams            : TServerParams              Read vServerParams            Write vServerParams;
+  Property ServerMethodClass       : TComponentClass            Read vServerMethod            Write SetServerMethod;
+  Property OnLastRequest           : TLastRequest               Read vLastRequest             Write vLastRequest;
+  Property OnLastResponse          : TLastResponse              Read vLastResponse            Write vLastResponse;
+  Property Encoding                : TEncodeSelect              Read VEncondig                Write VEncondig;          //Encoding da string
+  Property ForceWelcomeAccess      : Boolean                    Read vForceWelcomeAccess      Write vForceWelcomeAccess;
+  Property ServerContext           : String                     Read vServerContext           Write vServerContext;
+  Property RESTServiceNotification : TRESTDWServiceNotification Read vRESTServiceNotification Write vRESTServiceNotification;
 End;
 
 Type
@@ -4519,8 +4545,11 @@ Begin
      End
     Else
      HTTPServer.IOHandler  := Nil;
-    HTTPServer.DefaultPort := vServicePort;
-    HTTPServer.Active      := True;
+    If HTTPServer.Bindings.Count > 0 Then
+     HTTPServer.Bindings.Clear;
+    HTTPServer.Bindings.DefaultPort := vServicePort;
+    HTTPServer.DefaultPort          := vServicePort;
+    HTTPServer.Active               := True;
    Except
     On E : Exception do
      Begin
@@ -4963,6 +4992,36 @@ Begin
  End;
  vResultParams.Free;
 end;
+
+{ TRESTDWServiceNotification }
+
+Constructor TRESTDWServiceNotification.Create(AOwner : TComponent);
+Begin
+ Inherited;
+ vGarbageTime        := 60000;
+ vQueueNotifications := 50;
+End;
+
+Destructor TRESTDWServiceNotification.Destroy;
+Begin
+
+ Inherited;
+End;
+
+Function TRESTDWServiceNotification.GetAccessTag : String;
+Begin
+ Result := vAccessTag;
+End;
+
+Function TRESTDWServiceNotification.GetNotifications(LastNotification : String) : String;
+Begin
+
+End;
+
+Procedure TRESTDWServiceNotification.SetAccessTag(Value : String);
+Begin
+ vAccessTag := Value;
+End;
 
 end.
 
