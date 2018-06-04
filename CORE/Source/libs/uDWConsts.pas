@@ -73,7 +73,7 @@ Const
                         'Components REST DataWare Core' + #13#10 +
                         'CORE Version';
  DWSobreLicencaStatus = 'Open Source - Free Version';
- DWRelease            = '1429';
+ DWRelease            = '1435';
  DWVERSAO             = '1.3.1.' + DWRelease;
 
 Type
